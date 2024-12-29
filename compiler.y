@@ -1,5 +1,4 @@
 %{
-        /* C declaration-contains header, functions and other c variables.*/
 	#include<stdio.h>
 	#include<stdlib.h>
 	#include<conio.h>
@@ -9,8 +8,6 @@
     #include <io.h>
     #include <direct.h>
     #define YYDEBUG 1
-
-    /* Flex handling */
     extern FILE *yyin;
     extern FILE *yyout;
 	int yylex();
@@ -331,7 +328,7 @@
 
 %token ROOT END START VARIABLE ARRAY_VAR EOL ARROW RARROW 
 %token INTEGER REAL STRING INT_TYPE REAL_TYPE STRING_TYPE
-%token SEE READ
+%token SEE 
 %token AND OR NOT XOR LOG LOG2 LN SIN COS TAN FACTORIAL SQRT
 %token IF ELIF ELSE CHOICE DEFAULT OPTION
 %token FOREACH FROM TO DO WHILE BY AS
@@ -373,7 +370,6 @@ statement: /* Types of statement we will see. */
             | declaration EOL    {}
             | assigns EOL        {}
             | show EOL           {}
-            | read EOL           {}
             | expr EOL           
                 {
                     
@@ -596,28 +592,7 @@ print_vars:
                     printArrayIndex($1,$3);
                 }
     ;
-read:
-        READ RARROW read_vars   {}
-    ;
-read_vars: 
-            read_vars ',' VARIABLE 
-                {
-                    takeInput($3,0);
-                }
-            | read_vars ',' ARRAY_VAR '[' INTEGER ']' 
-                {
-                    takeInput($3,$5);
-                }
-            | VARIABLE
-                {
-                    takeInput($1,0);
-                }
-            | ARRAY_VAR '[' INTEGER ']' 
-                {
-                    takeInput($1,$3);
-                }
 
-    ;
 assigns:
              assigns ',' assign
             | assign
@@ -1251,16 +1226,12 @@ expr:
 %%
 
 
-int main(int argc, char **argv){
-//yydebug= 1;
+int main(){
     vptr = realloc(vptr,8*sizeof(var));
-    stk =  malloc(5*sizeof(stack));
+     stk =  malloc(5*sizeof(stack));
     vartaken = 100;
 	yyin = fopen ("input.txt","r");
-
     freopen ("output.txt","w",stdout);
-   
-   
     printf("\n\n     -------Starting Program Execution-------\n\n\n");
 	yyparse();
 	return 0;

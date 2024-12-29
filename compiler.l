@@ -29,7 +29,6 @@
 
 
 "see"											{return SEE;}
-"read"											{return READ;}
 
 "XOR"											{return XOR;}
 "AND"											{return AND;}

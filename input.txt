@@ -4,11 +4,10 @@ root:
 	int b = 30;
 	real c = a+b*2+log(56);
 	real xy = 5+6+-6;
-	string str;
-	read<- str;
+
 	int $$ara = {1,2,3,4,5};
 	$$ara[4]=34;
-	see->a,b,c,xy,str,$$ara;
+	see->a,b,c,xy,$$ara;
 	int factorial = (5+3)! ;
 	see ->factorial;
 	# Array Operation #

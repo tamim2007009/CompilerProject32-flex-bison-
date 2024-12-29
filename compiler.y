@@ -33,8 +33,27 @@
     }stack;
 
     /*Initial Pointers to store variable and modules.*/
-    var *vptr;
-    stack *stk;
+   /* Declare and initialize pointers globally */
+var *vptr = NULL;   // Pointer to variable storage
+stack *stk = NULL;  // Pointer to function stack
+//int vartaken = 100; // Example of other global variables
+     
+     void initialize_globals() {
+    vptr = (var *)malloc(8 * sizeof(var));
+    if (!vptr) {
+        perror("Memory allocation failed for vptr");
+        exit(EXIT_FAILURE);
+    }
+
+    stk = (stack *)malloc(5 * sizeof(stack));
+    if (!stk) {
+        perror("Memory allocation failed for stk");
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+
     /* Helper variables.*/
     int varCnt = 0,funCnt=0; /* variable and functions taken so far.*/
     int vartaken = 0,funtaken=0; /* memory assigned for them so far.*/
@@ -1226,19 +1245,23 @@ expr:
 %%
 
 
-int main(){
-    vptr = realloc(vptr,8*sizeof(var));
-     stk =  malloc(5*sizeof(stack));
-    vartaken = 100;
-	yyin = fopen ("input.txt","r");
-    freopen ("output.txt","w",stdout);
+int main() {
+   
+    initialize_globals();
+
+    yyin = fopen("input.txt", "r");
+    if (!yyin) {
+        printf("Error opening input file");  
+    }
+
+    freopen("output.txt", "w", stdout);
+
     printf("\n\n     -------Starting Program Execution-------\n\n\n");
-	yyparse();
-	return 0;
-} 
 
-
-    
+    yyparse();
+    return 0;
+}
+ 
      
 
 

@@ -1,6 +1,6 @@
 %{
                                 /*Definition Section*/
-	#include "compiler.tab.h"
+	#include "tamim.tab.h"
 	#include<string.h>
 	extern int yydebug;
 	int yyparse();	

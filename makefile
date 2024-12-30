@@ -1,8 +1,8 @@
 final:
-	bison -d compiler.y
-	flex compiler.l
-	gcc compiler.tab.c lex.yy.c
+	bison -d tamim.y
+	flex tamim.l
+	gcc tamim.tab.c lex.yy.c
 	./a.exe
 
 clean:
-	del a.exe compiler.tab.c compiler.tab.h lex.yy.c output.txt
+	del a.exe tamim.tab.c tamim.tab.h lex.yy.c output.txt

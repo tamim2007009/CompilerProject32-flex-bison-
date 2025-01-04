@@ -1,3 +1,5 @@
+import<tamim.h>
+
 root:
 	#Variable Handling#
 	int a = 5;
@@ -20,7 +22,8 @@ root:
 	see->$$ara,$$ara2;
 	#from-to loop#
 	from 5 to 8 by 1:
-		1+2+3;
+		int a=1+2+3;
+		
 	end
 	int a = 5;
 	#while loop#

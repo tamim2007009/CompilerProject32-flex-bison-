@@ -3,12 +3,13 @@
 	#include "tamim.tab.h"
 	#include<string.h>
 	extern int yydebug;
-	int yyparse();	
+	//int yyparse();	
 %}
 
 %%
         /*---Rules Section--*/
 
+"import<tamim.h>"      { return IMPORT; }
 "root"											{return ROOT;}
 ":"												{return START;}
 ";"                                             {return EOL;}

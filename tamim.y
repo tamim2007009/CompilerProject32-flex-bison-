@@ -353,6 +353,7 @@ stack *stk = NULL;  // Pointer to function stack
 %token FOREACH FROM TO DO WHILE BY AS
 %token COMMENT MODULE CALL
 %token PUSH POP SORT
+%token IMPORT
 %type <integer> INTEGER ROOT END START program while_conditions
 %type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING ARRAY_VAR COMMENT
 %type <real> expr REAL statements statement 
@@ -368,12 +369,14 @@ stack *stk = NULL;  // Pointer to function stack
 %left SIN COS TAN
 %%
                      /*  RULES  */
-program:    /* program will be selected as start node by default. */
-            ROOT START statements END 
-                {
-                    printf("\n\n     -------Program Compiled Successfully-------\n\n\n");
-                }
-    ;
+                     
+program:    /* The program starts with #import<tamim.h>, then follows ROOT START statements END */
+            IMPORT ROOT START statements END 
+            {
+                printf("\n\n     -------Program Compiled Successfully-------\n\n\n");
+            }
+        ;
+
 statements: /* program consists of multiple statements . each statement will be called recursively. */
                 {/*Do Nothing.*/} 
             |   statements statement                             

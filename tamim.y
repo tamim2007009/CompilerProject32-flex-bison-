@@ -369,7 +369,7 @@ stack *stk = NULL;  // Pointer to function stack
 %left SIN COS TAN
 %%
                      /*  RULES  */
-                     
+
 program:    /* The program starts with #import<tamim.h>, then follows ROOT START statements END */
             IMPORT ROOT START statements END 
             {

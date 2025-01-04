@@ -9,7 +9,11 @@
 %%
         /*---Rules Section--*/
 
-"import<tamim.h>"      { return IMPORT; }
+"import<tamim.h>"      {
+	fprintf(yyout, "-----------Importing tamim.h-------------\n");
+    return IMPORT; }
+	
+	
 "root"											{return ROOT;}
 ":"												{return START;}
 ";"                                             {return EOL;}

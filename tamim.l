@@ -14,14 +14,14 @@
     return IMPORT; }
 	
 	
-"root"											{return ROOT;}
+"base"											{return ROOT;}
 ":"												{return START;}
 ";"                                             {return EOL;}
 "end"											{return END;}
 
-"int"											{return INT_TYPE;}
-"real" 										    {return REAL_TYPE;}
-"string"										{return STRING_TYPE;}
+"num"											{return INT_TYPE;}
+"frac" 										    {return REAL_TYPE;}
+"alpha"										{return STRING_TYPE;}
 
 "++"											{return PPLUS;}
 "--"											{return MMINUS;}
@@ -33,7 +33,7 @@
 "<-"											{return RARROW;}
 
 
-"see"											{return SEE;}
+"inspect"											{return SEE;}
 
 "XOR"											{return XOR;}
 "AND"											{return AND;}

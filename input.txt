@@ -1,31 +1,38 @@
 import<tamim.h>
 
-root:
-	#Variable Handling#
-	int a = 5;
-	int b = 30;
-	real c = a+b*2+log(56);
-	real xy = 5+6+-6;
+base:
 
-	int $$ara = {1,2,3,4,5};
+	#Variable Handling#
+
+	alpha str = "This is Tamim";
+	inspect -> str;
+
+
+	num a = 5;
+	frac a=30.25;
+	num b = 30;
+	frac c = a+b*2+log(56);
+	frac xy = 5+6+-6;
+
+	num $$ara = {1,2,3,4,5};
 	$$ara[4]=34;
-	see->a,b,c,xy,$$ara;
-	int factorial = (5+3)! ;
-	see ->factorial;
+	inspect->a,b,c,xy,$$ara;
+	num factorial = (5+3)! ;
+	inspect ->factorial;
 	# Array Operation #
 	$$ara.push(1);
 	$$ara.push(2);
 	$$ara.sort;
-	see->$$ara;
+	inspect->$$ara;
 	$$ara.pop();
-	string $$ara2 = {"abc","def","ghi"};
-	see->$$ara,$$ara2;
+	alpha $$ara2 = {"abc","def","ghi"};
+	inspect->$$ara,$$ara2;
 	#from-to loop#
 	from 5 to 8 by 1:
-		int a=1+2+3;
+		num a=1+2+3;
 		
 	end
-	int a = 5;
+	num a = 5;
 	#while loop#
 	while a-->0:
 		2*4/3;
@@ -38,12 +45,12 @@ root:
 	while a++<15 ;
 
 	#If#
-	int p = 25;
+	num p = 25;
 	if(p>20):
 		1*2*3;
 	end
 	#If else#
-	int p = 25;
+	num p = 25;
 	if(p>30):
 		1*2*3;
 	end
@@ -80,7 +87,7 @@ root:
 	end
 	end
 	#Modules#
-	module myFunction(int a,int b):
+	module myFunction(num a,num b):
 		#inside Function#
 	end
 	call myFunction(a,p);

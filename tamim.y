@@ -354,6 +354,7 @@ stack *stk = NULL;  // Pointer to function stack
 %token COMMENT MODULE CALL
 %token PUSH POP SORT
 %token IMPORT
+
 %type <integer> INTEGER ROOT END START program while_conditions
 %type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING ARRAY_VAR COMMENT
 %type <real> expr REAL statements statement 

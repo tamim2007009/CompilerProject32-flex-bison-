@@ -29,8 +29,8 @@
 "!="											{return NEQL;}	
 "<="											{return LEQL;}
 ">="											{return GEQL;}
-"->"											{return ARROW;}
-"<-"											{return RARROW;}
+">>>"											{return ARROW;}
+
 
 
 "inspect"											{return SEE;}

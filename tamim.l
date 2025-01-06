@@ -64,9 +64,7 @@
 "module"										{return MODULE;}
 "call"											{return CALL;}
 
-"sort"											{return SORT;}
-"push"											{return PUSH;}
-"pop"											{return POP;}
+
 
 
 [0-9]+  										{yylval.integer = atoi(yytext); return INTEGER;}

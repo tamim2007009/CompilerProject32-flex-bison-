@@ -202,128 +202,8 @@ stack *stk = NULL;  // Pointer to function stack
         }
 
 
-        /* Printing an Array Index */
-        int printArrayIndex(char *varName, int position){
-            int index = getVariableIndex(varName);
-            if (index == -1)
-            {
-               doesNotExist(varName);
-            }
-            else if (vptr[index].isArray == 0)
-            {
-                notArray(varName);
-            }
-            else if (position >= vptr[index].size)
-            {
-                printf("index out of range\n");
-            }
-            else
-            {
-                printf("Value of Array %s at Index %d is: ", varName, position);
-                if (vptr[index].type == 1)
-                    printf("%lf\n", vptr[index].dval[position]);
-                if (vptr[index].type == 0)
-                    printf("%d\n", vptr[index].ival[position]);
-                if (vptr[index].type == 2)
-                    printf("%s\n", vptr[index].sval[position]);
-            }
-        }
 
-        /* Taking Input From User */
-         int takeInput(char *varName, int id ){
-             
-             printf("Enter Value of %s: ",varName);
-             
-            int index = getVariableIndex(varName);
-            if (index == -1)
-            {
-                doesNotExist(varName);
-            }
-            else
-            {
-                if(id>=vptr[index].size){
-                    outOfRange();
-                }
-                else
-                {
-                    if (vptr[index].type == 1)
-                        scanf("%lf", &vptr[index].dval[id]);
-                    if (vptr[index].type == 0)
-                        scanf("%d", &vptr[index].ival[id]);
-                    if (vptr[index].type == 2){
-                        char str [100000];
-                        scanf("%s",str);
-                        vptr[index].sval[id]=str;
-                    }
-                       
-                }
-            }
-        }
-
-        /* ---------Array Helper Functions-------- */
-
-        /* Push new element at the end of array. */
-        void appendData(int index,void *value){
-            int curSize = vptr[index].size;
-            double x = *(double*) value;
-            if(vptr[index].type==0){
-                vptr[index].ival = realloc(vptr[index].ival,(curSize+1)*sizeof(int));
-                vptr[index].ival[curSize] = (int)x;
-                vptr[index].size++;
-            }
-            else{
-                vptr[index].dval = realloc(vptr[index].dval,(curSize+1)*sizeof(double));
-                vptr[index].dval[curSize] = x;
-                vptr[index].size++;
-            }
-        }
-
-        /* pop last element from the array. */
-        void popLast(int index){
-            int curSize = vptr[index].size;
-            if(curSize==0){
-                emptyArray();
-                return ;
-            }
-            if(vptr[index].type==0){
-                vptr[index].ival = realloc(vptr[index].ival,(curSize-1)*sizeof(int));
-                vptr[index].size--;
-            }
-            else if (vptr[index].type==1){
-                vptr[index].dval = realloc(vptr[index].dval,(curSize-1)*sizeof(double));
-                vptr[index].size--;
-            }
-            else if (vptr[index].type==1){
-                vptr[index].sval = realloc(vptr[index].sval,(curSize-1)*sizeof(char**));
-                vptr[index].size--;
-            }
-        }
-        /* functions for quicksort */
-        int cmpfunInt (const void * a, const void * b) {
-            return ( *(int*)a - *(int*)b );
-        }
-
-        int cmpfunDouble ( const void *a , const void *b){
-            return ( *(double*)a - *(double*)b );
-        }
-
-        int cmpfunString(const void *a, const void *b) { 
-            const char **str_a = (const char **)a;
-            const char **str_b = (const char **)b;
-            return strcmp(*str_a, *str_b);
-        } 
-
-        void sort(int id){
-            if(vptr[id].type==0){
-                qsort (vptr[id].ival, vptr[id].size, sizeof(int), cmpfunInt);
-            }
-            else if(vptr[id].type==1){
-                qsort (vptr[id].dval, vptr[id].size, sizeof(double), cmpfunDouble);
-            }
-            else{
-                qsort (vptr[id].sval, vptr[id].size, sizeof(char*), cmpfunString);
-            }
-        }
+       
 
         /* --- Helper Function for Modules. ---*/
         int getFunctionIndex(char *varName){
@@ -352,7 +232,6 @@ stack *stk = NULL;  // Pointer to function stack
 %token IF ELIF ELSE CHOICE DEFAULT OPTION
 %token FOREACH FROM TO DO WHILE BY AS
 %token COMMENT MODULE CALL
-%token PUSH POP SORT
 %token IMPORT
 
 %type <integer> INTEGER ROOT END START program while_conditions
@@ -425,7 +304,7 @@ statement: /* Types of statement we will see. */
                         
                 }
             | module_call        {}
-            | array_operations   {}
+            
     ;
 declaration: /* Variable Declaration */
             INT_TYPE int_variables
@@ -598,22 +477,12 @@ print_vars:
                 {
                     printVariable($3);
                 }
-            | print_vars ',' ARRAY_VAR '[' expr ']'   
-                {
-                    printArrayIndex($3,$5);
-                }
+           
             | VARIABLE   
                 {
                     printVariable($1);
                 }
-            | ARRAY_VAR                       
-                {
-                    printVariable($1);
-                }
-            | ARRAY_VAR'[' expr ']'           
-                {
-                    printArrayIndex($1,$3);
-                }
+           
     ;
 
 assigns:
@@ -1039,44 +908,7 @@ single_param:
                 }
             
     ;
-array_operations:
-             ARRAY_VAR '.' PUSH '(' expr ')'
-                {
-                    int id = getVariableIndex($1);
-                    if(id==-1) doesNotExist($1);
-                    else if(vptr[id].isArray==0)
-                        notArray($1);
-                    else{
-                            if(vptr[id].type== 2){
-                                notNumeric();
-                            }
-                            else{
-                                double x = $5;
-                               appendData(id,&x);
-                            }
-                        }
-                    
-                }
-            | ARRAY_VAR '.' POP '('')'
-                {
-                    int id = getVariableIndex($1);
-                    if(id==-1) doesNotExist($1);
-                    else{
-                        popLast(id);
-                    }
-                }
-            | ARRAY_VAR '.' SORT 
-                {
-                    int id = getVariableIndex($1);
-                    if(id==-1) doesNotExist($1);
-                    else if(vptr[id].isArray==0)
-                        notArray($1);
-                    else{
-                            sort(id);
-                        }
-                
-                }
-    ;
+
 expr:             
             INTEGER                  
                 {

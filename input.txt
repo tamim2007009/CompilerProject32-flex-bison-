@@ -15,22 +15,15 @@ base:
 	frac xy = 5+6+-6;
 
 
-
+     inspect>>>a,b,c,xy;
 	
 
 	num $$ara = {1,2,3,4,5};
 	$$ara[4]=34;
-	inspect>>>a,b,c,xy,$$ara;
+	
 	num factorial = (5+3)! ;
 	inspect >>>factorial;
-	# Array Operation #
-	$$ara.push(1);
-	$$ara.push(2);
-	$$ara.sort;
-	inspect>>>$$ara;
-	$$ara.pop();
-	alpha $$ara2 = {"abc","def","ghi"};
-	inspect>>>$$ara,$$ara2;
+	
 	#from-to loop#
 	from 5 to 8 by 1:
 		num a=1+2+3;

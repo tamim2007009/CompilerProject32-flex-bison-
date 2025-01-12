@@ -1,17 +1,12 @@
 %{
 	#include<stdio.h>
 	#include<stdlib.h>
-	#include<conio.h>
 	#include<string.h>
 	#include<math.h>
-    #include <windows.h>
-    #include <io.h>
-    #include <direct.h>
     #define YYDEBUG 1
     extern FILE *yyin;
     extern FILE *yyout;
 	int yylex();
-	int yyparse();
 	int yyerror(char *s);
 
     typedef struct variable{
@@ -21,7 +16,7 @@
         double *dval;
         char** sval;
         int size;
-        int isArray;
+
     }var;
 
     typedef struct functionstack{
@@ -103,10 +98,10 @@ stack *stk = NULL;
         }
         /* Insert New variable in array. */
         /* void pointer is used so that I can typecast it to the type defined by type variable. */
-        void insertData(char *varname,void* value,int type,int id,int size,int isArray){
+        void insertData(char *varname,void* value,int type,int id,int size){
             vptr[id].name = varname;
             vptr[id].size = size;
-            vptr[id].isArray = isArray;
+           
             if(type==0){
                 int *x = ((int*)value);
                 vptr[id].ival = malloc(size*sizeof(int));
@@ -144,24 +139,8 @@ stack *stk = NULL;
             }
             else
             {
-                if (vptr[index].isArray)
-                {
-                    printf("%s is an array with %d elements.Elements are:\n\n", varName, vptr[index].size);
-                    for (int i = 0; i < vptr[index].size; i++)
-                    {
-                        if (vptr[index].type == 1)
-                            printf("%lf ", vptr[index].dval[i]);
-                        if (vptr[index].type == 0)
-                            printf("%d ", vptr[index].ival[i]);
-                        if (vptr[index].type == 2)
-                            printf("%s ", vptr[index].sval[i]);
-                        if (i % 10 == 9)
-                            puts("");
-                    }
-                    puts("");
-                }
-                else
-                {
+               
+                
                     printf("Value of %s is:",varName);
                     if (vptr[index].type == 1)
                         printf("%lf\n", vptr[index].dval[0]);
@@ -169,7 +148,7 @@ stack *stk = NULL;
                         printf("%d\n", vptr[index].ival[0]);
                     if (vptr[index].type == 2)
                         printf("%s\n", vptr[index].sval[0]);
-                }
+                
             }
         }
 
@@ -296,43 +275,19 @@ int_var:
                     }
                     else{
                         int value = $3;
-                        insertData($1,&value,0,varCnt,1,0);
+                        insertData($1,&value,0,varCnt,1);
                         varCnt++;
                     }
                 }
             | VARIABLE                        
                 {
                     int value = rand();
-                    insertData($1,&value,0,varCnt,1,0);
+                    insertData($1,&value,0,varCnt,1);
                     varCnt++;
                 }                       
-            |   ARRAY_VAR                       
-                {
-                    insertData($1,itmp,0,varCnt,cnt,1);
-                    varCnt++;
-                }
-            |   ARRAY_VAR '=' '{' ints '}'   
-                {
-                    insertData($1,itmp,0,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(itmp);
-                }
+        
     ; 
-ints:                   
-            ints ',' expr                   
-                {
-                    cnt++;
-                    itmp = realloc(itmp,cnt*sizeof(int));;
-                    itmp[cnt-1]=$3;
-                }
-            | expr                            
-                {
-                    cnt++;
-                    itmp = realloc(itmp,cnt*sizeof(int));;
-                    itmp[cnt-1]=(int)$1;
-                }
-    ;  
+
 real_variables: 
             real_variables ',' real_var {}
             | real_var                  {}
@@ -346,44 +301,19 @@ real_var:
                     }
                     else{
                         double value = $3;
-                        insertData($1,&value,1,varCnt,1,0);
+                        insertData($1,&value,1,varCnt,1);
                         varCnt++;
                     }
                 }
             | VARIABLE                        
             {
                 double value = rand();
-                insertData($1,&value,1,varCnt,1,0);
+                insertData($1,&value,1,varCnt,1);
                 varCnt++;
             }                       
-            | ARRAY_VAR                      
-                {
-                    printf("Real Array Declaration.\n");
-                    insertData($1,dtmp,1,varCnt,cnt,1);
-                    varCnt++;
-                }
-            | ARRAY_VAR '=' '{' reals '}'      
-                {
-                    insertData($1,dtmp,1,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(dtmp);
-                }
+          
     ; 
-reals:                   
-            reals ',' expr
-                {
-                    cnt++;
-                    dtmp = realloc(dtmp,cnt*sizeof(double));;
-                    dtmp[cnt-1]=$3;
-                }
-            | expr                            
-                {
-                    cnt++;
-                    dtmp = realloc(dtmp,cnt*sizeof(double));;
-                    dtmp[cnt-1]=$1;
-                }       
-    ;  
+
 string_variables: 
             string_variables ',' string_var            {}
             | string_var                               {}
@@ -397,7 +327,7 @@ string_var:
                     }
                     else{
                     char *value= $3;
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     varCnt++;
                     printf("New variable initialized.\n\n");
                     }
@@ -405,38 +335,12 @@ string_var:
             | VARIABLE                        
                 {
                     char* value = "";
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     varCnt++;
                 }                       
-            | ARRAY_VAR                       
-                {
-                    printf("Integer Array Declaration.\n\n");
-                    insertData($1,stmp,2,varCnt,cnt,1);
-                    varCnt++;
-                }
-            | ARRAY_VAR '=' '{' strings '}'      
-                {
-                    printf("String Array of size:%d\n",cnt);
-                    insertData($1,stmp,2,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(stmp);
-                }
+         
     ; 
-strings:                   
-            strings ',' STRING                   
-                {
-                    cnt++;
-                    stmp = realloc(stmp,cnt*sizeof(char*));;
-                    stmp[cnt-1]=$3;
-                }
-            | STRING                           
-                {
-                    cnt++;
-                    stmp = realloc(stmp,cnt*sizeof(char*));;
-                    stmp[cnt-1]=$1;
-                }
-    ;
+
 show:
             SEE ARROW print_vars
     ;
@@ -445,10 +349,7 @@ print_vars:
                 {
                     printVariable($3);
                 }
-            | print_vars ',' ARRAY_VAR        
-                {
-                    printVariable($3);
-                }
+            
            
             | VARIABLE   
                 {
@@ -480,28 +381,7 @@ assign:
                         }
                     }
                 }
-            | ARRAY_VAR '[' INTEGER ']' '=' expr
-                {
-                    int id = $3;
-                    int index = getVariableIndex($1);
-                    if (index == -1)
-                    {
-                        doesNotExist($1);
-                    }
-                    else
-                    {
-                        if(id>=vptr[index].size){
-                            outOfRange();
-                        }
-                        else
-                        {
-                            if (vptr[index].type == 1)
-                                vptr[index].dval[id] = $6;
-                            if (vptr[index].type == 0)
-                                vptr[index].ival[id] =  $6;
-                        }
-                    }
-                }
+         
     ;
 if_blocks:
             IF if_block else_statement   {}
@@ -810,7 +690,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     int value = rand();
-                    insertData($2,&value,0,varCnt,1,0);
+                    insertData($2,&value,0,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;
@@ -819,7 +699,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     double value = rand();
-                    insertData($2,&value,1,varCnt,1,0);
+                    insertData($2,&value,1,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;
@@ -828,7 +708,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     char* value = "";
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;

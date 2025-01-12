@@ -10,8 +10,9 @@ base:
 
 	num a = 5;
 	frac a = 30.25;
-
-
+    frac one= 3+3.2;
+	inspect >>>one ;
+    
 	num b = 30.02;
 	# alpha d=30;  // will show syntax error , unexpected INTEGER, expecting STRING #
 	frac c = a+b*2+log(56);

@@ -59,8 +59,6 @@ stack *stk = NULL;
     int currentParam; /* paramaters that have been processed of the calling function so far. */
     int functionRejected; /* 1 if calling module structure doesn't match. */
 
-    /* ------------------- Helper Functions------------------- */
-        /* Checks if a variable is already declared. */
         int checkExistance(char *varName){
             for(int i = 0 ; i<varCnt; i++){
                 if(strcmp(vptr[i].name,varName)==0){
@@ -69,8 +67,6 @@ stack *stk = NULL;
             }
             return 0;
         }
-
-        /* Get the index of variable that is called. If not found return -1. */
         int getVariableIndex(char *varName){
             for(int i = 0 ; i<varCnt; i++){
                 if(strcmp(vptr[i].name,varName)==0){
@@ -79,46 +75,30 @@ stack *stk = NULL;
             }
             return -1;
         }
-        /* Error Handling Function: No variable */
-        void doesNotExist(char *varName){
-            
-            printf("There is No Such Variable Named: %s\n\n",varName);
-           
+       
+        void doesNotExist(char *varName){            
+            printf("There is No Such Variable Named: %s\n\n",varName);         
         } 
-        /* Error Handling Function: Not an array */ 
-        void notArray(char *varName){
-           
-            printf("%s is not an Array.\n\n",varName);
         
-        }
-        /* Error Handling Function: out of bound */ 
         void outOfRange(){
            
             printf("Trying to Access index out of Range.\n\n");
            
         }
-        /* Error Handling Function: empty Array. */ 
-        void emptyArray(){
-          
-            printf("Array is already empty.\n");
-            
-        }
-        /* Error Handling Function: Already Declared. */
+       
         void alreadyExist(char *varName){
             
-            printf("%s is already Declared.\n",varName);
+            printf("%s is already Declared.\n\n",varName);
 
         }
-        /* Error Handling Function: Applying arithmetic on string. */
         void notNumeric(){
          
-            printf("String literals not applicable.\n");
+            printf("String literals not applicable.\n\n");
              
         }
-        /* Error Handling Function: Applying arithmetic on double. */
         void notInt(){
              
-            printf("Applicable of Integer only.\n");
+            printf("Applicable of Integer only.\n\n");
              
         }
         /* Insert New variable in array. */
@@ -166,7 +146,7 @@ stack *stk = NULL;
             {
                 if (vptr[index].isArray)
                 {
-                    printf("%s is an array with %d elements.Elements are:\n", varName, vptr[index].size);
+                    printf("%s is an array with %d elements.Elements are:\n\n", varName, vptr[index].size);
                     for (int i = 0; i < vptr[index].size; i++)
                     {
                         if (vptr[index].type == 1)
@@ -258,7 +238,7 @@ statement: /* Types of statement we will see. */
             | COMMENT            
                 {
                    
-                    printf("  %s\n",$1);
+                    printf("  %s\n\n",$1);
                     
                 }
             | declaration EOL    {}
@@ -267,7 +247,7 @@ statement: /* Types of statement we will see. */
             | expr EOL           
                 {
                     
-                    printf("Value of the expression:%.4lf\n",$1);
+                    printf("Value of the expression:%.4lf\n\n",$1);
                     $$ = $1;
                     
                 }
@@ -413,13 +393,13 @@ string_var:
                 {
                     int exists = checkExistance($1);
                     if(exists){
-                    printf("Variable Already declared.\n");
+                    printf("Variable Already declared.\n\n");
                     }
                     else{
                     char *value= $3;
                     insertData($1,&value,2,varCnt,1,0);
                     varCnt++;
-                    printf("New variable initialized.\n");
+                    printf("New variable initialized.\n\n");
                     }
                 }
             | VARIABLE                        
@@ -430,7 +410,7 @@ string_var:
                 }                       
             | ARRAY_VAR                       
                 {
-                    printf("Integer Array Declaration.\n");
+                    printf("Integer Array Declaration.\n\n");
                     insertData($1,stmp,2,varCnt,cnt,1);
                     varCnt++;
                 }
@@ -488,7 +468,7 @@ assign:
                     int index = getVariableIndex($1);
                     if (index == -1)
                     {
-                        printf("there is no variable named %s.\n", $1);
+                        printf("there is no variable named %s.\n\n", $1);
                     }
                     else
                     {
@@ -534,7 +514,7 @@ if_block:
                         
                         printf("Condition in if block is true.\n");
                         
-                        printf("Value of expression in if block is %.4lf\n",$3);
+                        printf("Value of expression in if block is %.4lf\n\n",$3);
                         conditionMatched = 1;
                     }
                     else{
@@ -553,7 +533,7 @@ single_else: ELSE START statement END
                 {
                     if(conditionMatched){
                         
-                        printf("Condition already fulfilled.Ignoring else block.\n");
+                        printf("Condition already fulfilled.Ignoring else block.\n\n");
                         
                     }
                     else{
@@ -562,7 +542,7 @@ single_else: ELSE START statement END
                             
                             printf("Condition in else block is true.\n");
                             
-                            printf("Value of expression in else block is %.4lf\n",$4);
+                            printf("Value of expression in else block is %.4lf\n\n",$4);
                             conditionMatched = 1;
                         }
                         else{
@@ -582,7 +562,7 @@ single_elif:
                 {
                     if(conditionMatched){
                         
-                        printf("Condition already fulfilled.Ignoring elif block.\n");
+                        printf("Condition already fulfilled.Ignoring elif block.\n\n");
                         
                     }
                     else{
@@ -639,7 +619,7 @@ default:
                         
                         printf("Executing Default Option.No match found.\n");
                         
-                        printf("Value of expression: %.4lf\n",$3);
+                        printf("Value of expression: %.4lf\n\n",$3);
                     }
                 }
     ;
@@ -659,9 +639,9 @@ option:
                         int isTrue = (fabs($2-choiceValue)<1e-9);
                             if(isTrue){
                                 
-                                printf("Option matched.\n");
+                                printf("Option matched.\n\n");
                                 
-                                printf("Value of expression in current option %.4lf\n",$4);
+                                printf("Value of expression in current option %.4lf\n\n",$4);
                                 conditionMatched = 1;
                             }
                             else{
@@ -682,12 +662,12 @@ loop_block:
                     double x = end-begin;
                     if(x*add < 0){
                         
-                        printf("Infinite  FROM loop\n");
+                        printf("Infinite  FROM loop\n\n");
                         
                     }
                     else{
                           for(double i = begin ; i<=end ; i+=add){
-                                printf("Runnning Inside From Loop and value of expression is:%.4lf\n",$8);
+                                printf("Runnning Inside  Loop and value of expression is:%.4lf\n",$8);
                              }
                     }   
                 }
@@ -712,7 +692,7 @@ while_conditions:
                 {
                     int id = getVariableIndex($1);
                     if(id==-1) doesNotExist($1);
-                    else if(vptr[id].type!=0) printf("Only applicable for Integer.\n");
+                    else if(vptr[id].type!=0) printf("Only applicable for Integer.\n\n");
                     else {
                         long long value = vptr[id].ival[0];
                             if(value> $4){
@@ -742,7 +722,7 @@ while_conditions:
                 {
                     int id = getVariableIndex($1);
                     if(id==-1) doesNotExist($1);
-                    else if(vptr[id].type!=0) printf("Only applicable for Integer.\n");
+                    else if(vptr[id].type!=0) printf("Only applicable for Integer.\n\n");
                     else {
                         long long value = vptr[id].ival[0];
                             if(value> $4){
@@ -807,9 +787,9 @@ module_name:
             VARIABLE
                 {
                     int id = getFunctionIndex($1);
-                    if(id!=-1){printf("Module Already Declared");}
+                    if(id!=-1){printf("Module Already Declared\n");}
                     else{
-                        printf("Declaring Module\n");
+                        printf("Declaring Module\n\n");
                         stk[funCnt].fname = malloc((strlen($1)+10)*sizeof(char));
                         strcpy(stk[funCnt].fname,$1);
                         stk[funCnt].varCnt = 0; 
@@ -859,7 +839,7 @@ module_call:
                         
                     }
                     else{
-                        printf("Module called Successfully.\n");
+                        printf("Module called Successfully.\n\n");
                     }
                 }
     ;
@@ -867,7 +847,7 @@ user_module_name:
             VARIABLE
                 {
                     int id = getFunctionIndex($1);
-                    if(id==-1){printf(" No Function Exist with this name.");}
+                    if(id==-1){printf(" No Function Exist with this name.\n");}
                     else{
                         currentFunction = id;
                         currentParam = 0;
@@ -885,7 +865,7 @@ single_param:
                     int id = getVariableIndex($1);
                     if(currentParam>=stk[currentFunction].varCnt){
                         
-                        printf("More variable than declared");
+                        printf("More variable than declared\n");
                         
                         functionRejected = 1;
                     }
@@ -1061,7 +1041,7 @@ expr:
             | expr FACTORIAL   
                 {
                     int cl = ceil($1);int fl = floor($1);
-                    if(cl!=fl) printf("can't find FACTORIAL of real number.");
+                    if(cl!=fl) printf("can't find FACTORIAL of real number.\n");
                     else {
                         long long x = 1;
                         for(long long i=1;i<=$1;i++) x*=i;

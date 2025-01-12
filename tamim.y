@@ -14,10 +14,9 @@
 	int yyparse();
 	int yyerror(char *s);
 
-    /* structure for storing variables.*/
     typedef struct variable{
         char *name;
-        int type; /* indicates data type- 0:int,1:double,2:char* */
+        int type; 
         int *ival;
         double *dval;
         char** sval;
@@ -25,20 +24,16 @@
         int isArray;
     }var;
 
-    /*structure for storing user-defined modules(functions).*/
     typedef struct functionstack{
         char *fname;
         var *fptr;
         int varCnt;
     }stack;
 
-    /*Initial Pointers to store variable and modules.*/
-   /* Declare and initialize pointers globally */
-var *vptr = NULL;   // Pointer to variable storage
-stack *stk = NULL;  // Pointer to function stack
-//int vartaken = 100; // Example of other global variables
+var *vptr = NULL;  
+stack *stk = NULL;  
      
-     void initialize_globals() {
+ void initialize_globals() {
     vptr = (var *)malloc(8 * sizeof(var));
     if (!vptr) {
         perror("Memory allocation failed for vptr");
@@ -52,12 +47,9 @@ stack *stk = NULL;  // Pointer to function stack
     }
 }
 
-
-
-    /* Helper variables.*/
-    int varCnt = 0,funCnt=0; /* variable and functions taken so far.*/
-    int vartaken = 0,funtaken=0; /* memory assigned for them so far.*/
-    int cnt = 0; /* counts array element during declaration. */
+    int varCnt = 0,funCnt=0; 
+    int vartaken = 0,funtaken=0;
+    int cnt = 0; 
     int *itmp;
     double *dtmp;  /* Stores array value temporarily to insert later*/
     char **stmp;
@@ -90,19 +82,19 @@ stack *stk = NULL;  // Pointer to function stack
         /* Error Handling Function: No variable */
         void doesNotExist(char *varName){
             
-            printf("There is No Such Variable Named: %s\n",varName);
+            printf("There is No Such Variable Named: %s\n\n",varName);
            
         } 
         /* Error Handling Function: Not an array */ 
         void notArray(char *varName){
            
-            printf("%s is not an Array.\n",varName);
+            printf("%s is not an Array.\n\n",varName);
         
         }
         /* Error Handling Function: out of bound */ 
         void outOfRange(){
            
-            printf("Trying to Access index out of Range.\n");
+            printf("Trying to Access index out of Range.\n\n");
            
         }
         /* Error Handling Function: empty Array. */ 
@@ -1092,7 +1084,7 @@ int main() {
 
     freopen("output.txt", "w", stdout);
 
-    printf("\n\n     -------Starting Program Execution-------\n\n\n");
+    printf("\n-------Starting Program Execution-------\n\n\n");
 
     yyparse();
     return 0;

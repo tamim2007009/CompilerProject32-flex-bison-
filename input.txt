@@ -10,7 +10,10 @@ base:
 
 	num a = 5;
 	frac a = 30.25;
-	num b = 30;
+
+
+	num b = 30.02;
+	# alpha d=30;  // will show syntax error , unexpected INTEGER, expecting STRING #
 	frac c = a+b*2+log(56);
 	frac xy = 5+6+-6;
 

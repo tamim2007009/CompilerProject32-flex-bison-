@@ -71,7 +71,7 @@
 [0-9]*[.][0-9]+([eE][+-]?[0-9]+)?				{yylval.real = atof(yytext);return REAL;}
 
 [A-Za-z0-9]+ 									{yylval.string = strdup(yytext);return VARIABLE;}
-[$][$][A-Za-z0-9]+ 								{yylval.string = strdup(yytext);return ARRAY_VAR;}
+
 
 
 \"(\\.|[^"\\])*\"								{

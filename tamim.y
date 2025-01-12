@@ -16,7 +16,6 @@
         double *dval;
         char** sval;
         int size;
-
     }var;
 
     typedef struct functionstack{
@@ -41,18 +40,14 @@ stack *stk = NULL;
         exit(EXIT_FAILURE);
     }
 }
-
     int varCnt = 0,funCnt=0; 
     int vartaken = 0,funtaken=0;
     int cnt = 0; 
-    int *itmp;
-    double *dtmp;  /* Stores array value temporarily to insert later*/
-    char **stmp;
-    int conditionMatched; /* 1 if condition is matched in conditional statements(if-else,choice) */
-    double choiceValue; /* stores the value of choice to check in options. */
-    int currentFunction; /* module index that is being called currently. */
-    int currentParam; /* paramaters that have been processed of the calling function so far. */
-    int functionRejected; /* 1 if calling module structure doesn't match. */
+    int conditionMatched; 
+    double choiceValue;
+    int currentFunction;
+    int currentParam; 
+    int functionRejected; 
 
         int checkExistance(char *varName){
             for(int i = 0 ; i<varCnt; i++){
@@ -71,45 +66,22 @@ stack *stk = NULL;
             return -1;
         }
        
-        void doesNotExist(char *varName){            
-            printf("There is No Such Variable Named: %s\n\n",varName);         
-        } 
+        void doesNotExist(char *varName){   printf("There is No Such Variable Named: %s\n\n",varName);  } 
+        void outOfRange() { printf("Trying to Access index out of Range.\n\n");    }
+        void alreadyExist(char *varName)  { printf("%s is already Declared.\n\n",varName);  }
+        void notNumeric()  { printf("String literals not applicable.\n\n");    }
+        void notInt()  {  printf("Applicable of Integer only.\n\n"); }
         
-        void outOfRange(){
-           
-            printf("Trying to Access index out of Range.\n\n");
-           
-        }
-       
-        void alreadyExist(char *varName){
-            
-            printf("%s is already Declared.\n\n",varName);
-
-        }
-        void notNumeric(){
-         
-            printf("String literals not applicable.\n\n");
-             
-        }
-        void notInt(){
-             
-            printf("Applicable of Integer only.\n\n");
-             
-        }
-        /* Insert New variable in array. */
-        /* void pointer is used so that I can typecast it to the type defined by type variable. */
         void insertData(char *varname,void* value,int type,int id,int size){
             vptr[id].name = varname;
             vptr[id].size = size;
-           
             if(type==0){
                 int *x = ((int*)value);
                 vptr[id].ival = malloc(size*sizeof(int));
                 for(int i=0;i<size;i++){
                     vptr[id].ival[i] = x[i];
                 }
-                vptr[id].type = 0;
-                
+                vptr[id].type = 0;   
             }
             else if(type==1){
                 double* x = ((double*)value);
@@ -117,8 +89,7 @@ stack *stk = NULL;
                 for(int i=0;i<size;i++){
                     vptr[id].dval[i] = x[i];
                 }
-                vptr[id].type = 1;
-                
+                vptr[id].type = 1;    
             }
             else if(type==2){
                 char **s =((char**)value);
@@ -128,9 +99,7 @@ stack *stk = NULL;
                 }
                 vptr[id].type = 2;
             }
-        }
-
-        /* Printing a variable (including array)*/
+        }  
         void printVariable(char *varName){
             int index = getVariableIndex(varName);
             if (index == -1)
@@ -138,25 +107,17 @@ stack *stk = NULL;
                 doesNotExist(varName);
             }
             else
-            {
-               
-                
+            {               
                     printf("Value of %s is:",varName);
                     if (vptr[index].type == 1)
                         printf("%lf\n", vptr[index].dval[0]);
                     if (vptr[index].type == 0)
                         printf("%d\n", vptr[index].ival[0]);
                     if (vptr[index].type == 2)
-                        printf("%s\n", vptr[index].sval[0]);
-                
+                        printf("%s\n", vptr[index].sval[0]);        
             }
         }
 
-
-
-       
-
-        /* --- Helper Function for Modules. ---*/
         int getFunctionIndex(char *varName){
             for(int i = 0 ; i<funCnt; i++)
             {
@@ -167,16 +128,12 @@ stack *stk = NULL;
             return -1;
         }
 %}
-/* ---------------Bison Declaration. ---------------*/
-%error-verbose /* shows syntax error. */
-%debug /* helps to see all states one by one. */
 %union{
 	int integer;
 	double real;
 	char* string;
 }
-
-%token ROOT END START VARIABLE ARRAY_VAR EOL ARROW  
+%token ROOT END START VARIABLE  EOL ARROW  
 %token INTEGER REAL STRING INT_TYPE REAL_TYPE STRING_TYPE
 %token SEE 
 %token AND OR NOT XOR LOG LOG2 LN SIN COS TAN FACTORIAL SQRT
@@ -186,7 +143,7 @@ stack *stk = NULL;
 %token IMPORT
 
 %type <integer> INTEGER ROOT END START program while_conditions
-%type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING ARRAY_VAR COMMENT
+%type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING COMMENT
 %type <real> expr REAL statements statement 
 %nonassoc ELIF 
 %nonassoc ELSE

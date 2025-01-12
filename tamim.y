@@ -156,44 +156,25 @@ stack *stk = NULL;
 %right  '^' FACTORIAL
 %left SIN COS TAN
 %%
-                     /*  RULES  */
+                 
 
-program:    /* The program starts with #import<tamim.h>, then follows ROOT START statements END */
-            IMPORT ROOT START statements END 
-            {
-                printf("\n\n     -------Program Compiled Successfully-------\n\n\n");
-            }
-        ;
-
-statements: /* program consists of multiple statements . each statement will be called recursively. */
-                {/*Do Nothing.*/} 
+program:      IMPORT ROOT START statements END    { printf("\n\n     -------Program Compiled Successfully-------\n\n\n");  } ;
+statements:  {/*Do Nothing.*/} 
             |   statements statement                             
-    ;
-statement: /* Types of statement we will see. */
-            EOL                 {}
-            | COMMENT            
-                {
-                   
-                    printf("  %s\n\n",$1);
-                    
-                }
+            ;
+statement:       EOL                 {}
+            | COMMENT             { printf("  %s\n\n",$1);   }
             | declaration EOL    {}
             | assigns EOL        {}
             | show EOL           {}
-            | expr EOL           
-                {
-                    
-                    printf("Value of the expression:%.4lf\n\n",$1);
-                    $$ = $1;
-                    
-                }
+            | expr EOL    { printf("Value of the expression:%.4lf\n\n",$1);
+                               $$ = $1; }
             | if_blocks          
                 {conditionMatched=0;}
             | choice_block       {}
             | loop_block         {}
             | module_declare     
-                {
-                        
+                {   
                         printf("New Module Declared-");
                         printf("Module Name: %s\n",stk[funCnt].fname);
                         printf("Parameters of the Module\n");
@@ -214,8 +195,7 @@ statement: /* Types of statement we will see. */
             | module_call        {}
             
     ;
-declaration: /* Variable Declaration */
-            INT_TYPE int_variables
+declaration: INT_TYPE int_variables
             | REAL_TYPE real_variables
             | STRING_TYPE string_variables
     ;
@@ -241,10 +221,8 @@ int_var:
                     int value = rand();
                     insertData($1,&value,0,varCnt,1);
                     varCnt++;
-                }                       
-        
+                }                            
     ; 
-
 real_variables: 
             real_variables ',' real_var {}
             | real_var                  {}
@@ -267,10 +245,8 @@ real_var:
                 double value = rand();
                 insertData($1,&value,1,varCnt,1);
                 varCnt++;
-            }                       
-          
+            }                           
     ; 
-
 string_variables: 
             string_variables ',' string_var            {}
             | string_var                               {}
@@ -294,40 +270,23 @@ string_var:
                     char* value = "";
                     insertData($1,&value,2,varCnt,1);
                     varCnt++;
-                }                       
-         
+                }                               
     ; 
-
 show:
             SEE ARROW print_vars
     ;
 print_vars:
-            print_vars ',' VARIABLE             
-                {
-                    printVariable($3);
-                }
-            
-           
-            | VARIABLE   
-                {
-                    printVariable($1);
-                }
-           
+            print_vars ',' VARIABLE   {   printVariable($3);  }        
+            | VARIABLE     {  printVariable($1);   }        
     ;
 
-assigns:
-             assigns ',' assign
+assigns:     assigns ',' assign
             | assign
     ;
-assign:
-
-            VARIABLE '=' expr
+assign:     VARIABLE '=' expr
                 {
                     int index = getVariableIndex($1);
-                    if (index == -1)
-                    {
-                        printf("there is no variable named %s.\n\n", $1);
-                    }
+                    if (index == -1) {    printf("there is no variable named %s.\n\n", $1);   }
                     else
                     {
                         {
@@ -337,56 +296,36 @@ assign:
                                 vptr[index].ival[0] = $3;
                         }
                     }
-                }
-         
+                }      
     ;
-if_blocks:
-            IF if_block else_statement   {}
+if_blocks:    IF if_block else_statement   {}
     ;
-if_block:
-            expr START statement END 
+if_block:     expr START statement END 
                 {
                     int isTrue = (fabs($1)>1e-9);
-                    if(isTrue){
-                        
-                        printf("Condition in if block is true.\n");
-                        
+                    if(isTrue){                       
+                        printf("Condition in if block is true.\n");                      
                         printf("Value of expression in if block is %.4lf\n\n",$3);
                         conditionMatched = 1;
                     }
-                    else{
-                        
-                        printf("Condition in if block is false.\n");
-                        
-                    }
+                    else{    printf("Condition in if block is false.\n");     }
                 }
     ;
-else_statement:
-            | elif_statement
+else_statement:  | elif_statement
             | elif_statement   single_else
             | single_else
     ;
 single_else: ELSE START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring else block.\n\n");
-                        
-                    }
+                    if(conditionMatched){    printf("Condition already fulfilled.Ignoring else block.\n\n");    }
                     else{
                         double isTrue =1;
-                        if(isTrue){
-                            
-                            printf("Condition in else block is true.\n");
-                            
-                            printf("Value of expression in else block is %.4lf\n\n",$4);
+                        if(isTrue){                      
+                            printf("Condition in else block is true.\n");         
+                             printf("Value of expression in else block is %.4lf\n\n",$4);
                             conditionMatched = 1;
                         }
-                        else{
-                            
-                            printf("Condition in else block is false.\n");
-                            
-                        }
+                        else{  printf("Condition in else block is false.\n");    }
                     }  
                 }
     ;
@@ -397,30 +336,19 @@ elif_statement:
 single_elif:
             ELIF expr START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring elif block.\n\n");
-                        
-                    }
+                    if(conditionMatched) { printf("Condition already fulfilled.Ignoring elif block.\n\n");}              
                     else{
                             int isTrue = (fabs($2)>1e-9);
-                            if(isTrue){
-                                
+                            if(isTrue){   
                                 printf("Condition in elif block is true.\n");
-                                
                                 printf("Value of expression in elif block is %.4lf\n",$4);
                                 conditionMatched = 1;
                             }
-                            else{
-                                
-                                printf("Condition in elif block is false.\n");
-                                
-                            }
+                            else { printf("Condition in elif block is false.\n");}
+                                  
                         }
                 }
     ;
-
-
 choice_block: 
             CHOICE choice_variable START options END  
                 {conditionMatched = 0;}
@@ -430,15 +358,10 @@ choice_variable:
                 {
                     int id = getVariableIndex($1);
                     if(id==-1) printf("No such variable");
-                    else if(vptr[id].type==2){
-                        
-                        printf("can't assign string in choices.");
-                        
-                    }
+                    else if(vptr[id].type==2) { printf("can't assign string in choices.");}
                     else if(vptr[id].type==0) choiceValue = vptr[id].ival[0];
                     else choiceValue = vptr[id].dval[0];
                 }
-
     ;
 options:    
             optionlist default
@@ -447,15 +370,9 @@ options:
 default: 
             DEFAULT START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring default option.\n");
-                        
-                        }
+                    if(conditionMatched) {    printf("Condition already fulfilled.Ignoring default option.\n");  }
                     else{
-                        
-                        printf("Executing Default Option.No match found.\n");
-                        
+                          printf("Executing Default Option.No match found.\n");          
                         printf("Value of expression: %.4lf\n\n",$3);
                     }
                 }
@@ -467,29 +384,19 @@ optionlist:
 option: 
             OPTION expr START statement END 
                 {
-                    if(conditionMatched){
+                    if(conditionMatched) {printf("Condition already fulfilled.Ignoring current option\n");}
                         
-                        printf("Condition already fulfilled.Ignoring current option\n");
-                        
-                        }
                     else{
                         int isTrue = (fabs($2-choiceValue)<1e-9);
-                            if(isTrue){
-                                
-                                printf("Option matched.\n\n");
-                                
+                            if(isTrue){ 
+                                printf("Option matched.\n\n");        
                                 printf("Value of expression in current option %.4lf\n\n",$4);
                                 conditionMatched = 1;
                             }
-                            else{
-                                
-                                printf("Condition of current option doesn't match.\n");
-                                
-                            }
+                            else {printf("Condition of current option doesn't match.\n");}    
                     }
                 }
     ;
-
 loop_block: 
             FROM expr TO expr BY expr START statement END 
                 {
@@ -497,11 +404,7 @@ loop_block:
                     double end = $4;
                     double add = $6;
                     double x = end-begin;
-                    if(x*add < 0){
-                        
-                        printf("Infinite  FROM loop\n\n");
-                        
-                    }
+                    if(x*add < 0) {printf("Infinite  FROM loop\n\n");}
                     else{
                           for(double i = begin ; i<=end ; i+=add){
                                 printf("Runnning Inside  Loop and value of expression is:%.4lf\n",$8);
@@ -509,23 +412,17 @@ loop_block:
                     }   
                 }
             | WHILE while_conditions START statement END
-                {
-                    
-                    printf("While will run for %d times\n",$2);
-                    
+                {                  
+                    printf("While will run for %d times\n",$2); 
                     for(int i = 0;i<$2;i++){
                         printf("Value of Statement %.4lf\n",$4);
                     }
                 }
             | DO START expr END WHILE while_conditions EOL 
-                {
-                    
+                {    
                     printf("repeat while will run for %d times\n",$6);
                     int x=$6;
-                    while(x--){
-                        printf("Value of Statement %.4lf\n",$3);
-                    }
-                    
+                    while(x--){   printf("Value of Statement %.4lf\n",$3); }  
                 }
     ;
 while_conditions: 
@@ -742,120 +639,34 @@ expr:
                     else if(vptr[id].type==0) $$ = vptr[id].ival[0];
                     else $$ = vptr[id].dval[0];
                 }
-            | '+' expr
-                {
-                    $$ = $2;
-                }
-            | '-' expr
-                {
-                    $$ = -$2;
-                }
-            | PPLUS expr
-                {
-                    $$ = $2;
-                }
-            | MMINUS expr
-                {
-                    $$ = $2;
-                }
-            | expr '+' expr         
-                {
-                    $$ = $1 + $3;
-                }
-            | expr '-' expr         
-                {
-                    $$ = $1 - $3;
-                }
-            | expr '*' expr
-                {
-                    $$ = $1 * $3;
-                } 
-            | expr '/' expr         
-                {
-                    $$ = $1 / $3;
-                }
-            | expr '^' expr         
-                {
-                    $$ = pow($1,$3);
-                }
-            | expr '%' expr         
-                {
-
-                    $$ = (int)$1 % (int)$3;
-                }
-            | expr '<' expr         
-                {
-                    $$ = ($1 < $3);
-                }
-            | expr '>' expr         
-                {
-                    $$ = ($1 > $3);
-                }
-            | expr LEQL expr        
-                {
-                    $$ = ($1 <= $3);
-                }
-            | expr GEQL expr        
-                {
-                    $$ = ($1 >= $3);
-                }
-            | expr EQL expr         
-                {
-                    $$ = ($1 == $3);
-                }
-            | expr NEQL expr        
-                {
-                    $$ = ($1 != $3);
-                }
-            | expr AND expr         
-                {
-                    $$ = ( $1 && $3);
-                }
-            | expr OR expr          
-                {
-                    $$ = ($1 || $3);
-                }
-            | expr XOR expr         
-                {
-                    $$ = ((int)$1 ^ (int)$3);
-                }
-            | NOT expr              
-                {
-                    $$ = !$2;
-                }
-            | '(' expr ')'          
-                {
-                    $$ = $2;
-                }
-            | SIN '(' expr ')'      
-                {
-                    $$ = sin($3);
-
-                }
-            | COS '(' expr ')'      
-                {
-                    $$ = cos($3);
-                }
-            | TAN '(' expr ')'      
-                {
-                    $$ = tan($3);
-                }
-            | LOG '(' expr ')'      
-                {
-                    $$ = log10($3);
-                }
-            | LOG2 '(' expr ')'     
-                {
-                    $$ = log2($3);
-                }
-            | LN '(' expr ')'       
-                {
-                    $$ = log($3);
-                }
-            | SQRT '(' expr ')'     
-                {
-                    $$ = sqrt($3);
-                }
+            | '+' expr { $$ = $2;}
+            | '-' expr { $$ = -$2;}
+            | PPLUS expr {$$ = $2;}
+            | MMINUS expr {$$ = $2;}
+            | expr '+' expr   {$$ = $1 + $3;}      
+            | expr '-' expr    {$$ = $1 - $3;}     
+            | expr '*' expr   {$$ = $1 * $3;}
+            | expr '/' expr  {$$ = $1 / $3;}       
+            | expr '^' expr   {$$ = pow($1,$3);}      
+            | expr '%' expr     {$$ = (int)$1 % (int)$3;}    
+            | expr '<' expr      {$$ = ($1 < $3);}   
+            | expr '>' expr    {$$ = ($1 > $3);}     
+            | expr LEQL expr  {$$ = ($1 <= $3);}      
+            | expr GEQL expr    {$$ = ($1 >= $3);}    
+            | expr EQL expr    {$$ = ($1 == $3);}     
+            | expr NEQL expr  {$$ = ($1 != $3);}      
+            | expr AND expr  {$$ = ( $1 && $3);}       
+            | expr OR expr   {$$ = ($1 || $3);}       
+            | expr XOR expr    {$$ = ((int)$1 ^ (int)$3);}     
+            | NOT expr    {$$ = !$2;}          
+            | '(' expr ')'    {$$ = $2;}      
+            | SIN '(' expr ')'      { $$ = sin($3);}
+            | COS '(' expr ')'      {  $$ = cos($3);}
+            | TAN '(' expr ')'    {    $$ = tan($3);} 
+            | LOG '(' expr ')'   { $$ = log10($3);}   
+            | LOG2 '(' expr ')'     {$$ = log2($3);}
+            | LN '(' expr ')'      { $$ = log($3);} 
+            | SQRT '(' expr ')'     { $$ = sqrt($3);     }
             | VARIABLE PPLUS        
                 {
                     int id = getVariableIndex($1);

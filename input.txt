@@ -45,11 +45,16 @@ base:
 	end
 	while a++<15 ;
 
+
+
 	#If#
-	num p = 25;
+	num p = 15;
 	if(p>20):
 		1*2*3;
 	end
+
+
+
 	#If else#
 	num p = 25;
 	if(p>30):
@@ -58,6 +63,9 @@ base:
 	else:
 		2*3*4;
 	end
+
+
+
 	#if-elif-else#
 	if p>20 AND p<25:
 		1;
@@ -71,6 +79,10 @@ base:
 	else:
 		4;
 	end
+
+
+
+
 
 	#Choices(switch-case)#
 	choices for p:
@@ -87,10 +99,15 @@ base:
 		4;
 	end
 	end
+
+
 	#Modules#
 	module myFunction(num a,num b):
 		#inside Function#
 	end
 	call myFunction(a,p);
 	call myFunction(a,c);
+
+
+	
 end

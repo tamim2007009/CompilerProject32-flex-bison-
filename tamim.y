@@ -684,6 +684,10 @@ loop_block:
                 {
                     
                     printf("repeat while will run for %d times\n",$6);
+                    int x=$6;
+                    while(x--){
+                        printf("Value of Statement %.4lf\n",$3);
+                    }
                     
                 }
     ;

@@ -1,0 +1,92 @@
+
+-------Starting Program Execution-------
+
+
+-----------Importing tamim.h-------------
+ str :This is Tamim
+b is already Declared.
+
+ one :6.200000
+ a :5
+ b :2009
+ c :2398.548188
+ xy :1.000000
+ factorial :40320
+4.0000
+
+For will run for 4 times
+4.0000
+4.0000
+4.0000
+4.0000
+2.6667
+
+While will run for 5 times
+ 2.6667
+ 2.6667
+ 2.6667
+ 2.6667
+ 2.6667
+repeat while will run for 3 times
+ 144.0000
+ 144.0000
+ 144.0000
+ ifC :If condition here
+3.0000
+
+Condition in if block is true.
+ 3.0000
+
+1.0000
+
+Condition in if block is false.
+103.0000
+
+Condition in elif block is true.
+ 103.0000
+3.0000
+
+Condition already fulfilled.Ignoring elif block.
+
+4.0000
+
+Condition already fulfilled.Ignoring else block.
+
+1000.0000
+
+Condition in if block is false.
+4.0000
+
+Condition in else block is true.
+ 4.0000
+
+3.0000
+
+Option matched.
+
+ 3.0000
+
+2.0000
+
+Condition already fulfilled.Ignoring current option
+3.0000
+
+Condition already fulfilled.Ignoring current option
+4.0000
+
+Condition already fulfilled.Ignoring default option.
+Declaring Module
+
+New Module Declared-Module Name: myFunction
+Parameters of the Module
+Parameter Name:a Data Type: INT
+Parameter Name:b Data Type: INT
+Module called Successfully.
+
+Module called Successfully.
+
+
+
+     -------Program Compiled Successfully-------
+
+

@@ -108,7 +108,7 @@ stack *stk = NULL;
             }
             else
             {               
-                    printf("Value of %s is:",varName);
+                    printf(" %s :",varName);
                     if (vptr[index].type == 1)
                         printf("%lf\n", vptr[index].dval[0]);
                     if (vptr[index].type == 0)
@@ -133,7 +133,7 @@ stack *stk = NULL;
 	double real;
 	char* string;
 }
-%token ROOT END START VARIABLE  EOL ARROW  
+%token BASE END START VARIABLE  EOL ARROW  
 %token INTEGER REAL STRING INT_TYPE REAL_TYPE STRING_TYPE
 %token SEE 
 %token AND OR NOT XOR LOG LOG2 LN SIN COS TAN FACTORIAL SQRT
@@ -142,7 +142,7 @@ stack *stk = NULL;
 %token COMMENT MODULE CALL
 %token IMPORT
 
-%type <integer> INTEGER ROOT END START program while_conditions
+%type <integer> INTEGER BASE END START program while_conditions
 %type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING COMMENT
 %type <real> expr REAL statements statement 
 %nonassoc ELIF 
@@ -158,16 +158,16 @@ stack *stk = NULL;
 %%
                  
 
-program:      IMPORT ROOT START statements END    { printf("\n\n     -------Program Compiled Successfully-------\n\n\n");  } ;
+program:      IMPORT BASE START statements END    { printf("\n\n     -------Program Compiled Successfully-------\n\n\n");  } ;
 statements:  {/*Do Nothing.*/} 
             |   statements statement                             
             ;
 statement:       EOL                 {}
-            | COMMENT             { printf("  %s\n\n",$1);   }
+            | COMMENT             {   }
             | declaration EOL    {}
             | assigns EOL        {}
             | show EOL           {}
-            | expr EOL    { printf("Value of the expression:%.4lf\n\n",$1);
+            | expr EOL    { printf("%.4lf\n\n",$1);
                                $$ = $1; }
             | if_blocks          
                 {conditionMatched=0;}
@@ -262,7 +262,7 @@ string_var:
                     char *value= $3;
                     insertData($1,&value,2,varCnt,1);
                     varCnt++;
-                    printf("New variable initialized.\n\n");
+                  
                     }
                 }
             | VARIABLE                        
@@ -305,7 +305,7 @@ if_block:     expr START statement END
                     int isTrue = (fabs($1)>1e-9);
                     if(isTrue){                       
                         printf("Condition in if block is true.\n");                      
-                        printf("Value of expression in if block is %.4lf\n\n",$3);
+                        printf(" %.4lf\n\n",$3);
                         conditionMatched = 1;
                     }
                     else{    printf("Condition in if block is false.\n");     }
@@ -322,7 +322,7 @@ single_else: ELSE START statement END
                         double isTrue =1;
                         if(isTrue){                      
                             printf("Condition in else block is true.\n");         
-                             printf("Value of expression in else block is %.4lf\n\n",$4);
+                             printf(" %.4lf\n\n",$4);
                             conditionMatched = 1;
                         }
                         else{  printf("Condition in else block is false.\n");    }
@@ -341,7 +341,7 @@ single_elif:
                             int isTrue = (fabs($2)>1e-9);
                             if(isTrue){   
                                 printf("Condition in elif block is true.\n");
-                                printf("Value of expression in elif block is %.4lf\n",$4);
+                                printf(" %.4lf\n",$4);
                                 conditionMatched = 1;
                             }
                             else { printf("Condition in elif block is false.\n");}
@@ -373,7 +373,7 @@ default:
                     if(conditionMatched) {    printf("Condition already fulfilled.Ignoring default option.\n");  }
                     else{
                           printf("Executing Default Option.No match found.\n");          
-                        printf("Value of expression: %.4lf\n\n",$3);
+                        printf(" %.4lf\n\n",$3);
                     }
                 }
     ;
@@ -390,7 +390,7 @@ option:
                         int isTrue = (fabs($2-choiceValue)<1e-9);
                             if(isTrue){ 
                                 printf("Option matched.\n\n");        
-                                printf("Value of expression in current option %.4lf\n\n",$4);
+                                printf(" %.4lf\n\n",$4);
                                 conditionMatched = 1;
                             }
                             else {printf("Condition of current option doesn't match.\n");}    
@@ -406,8 +406,9 @@ loop_block:
                     double x = end-begin;
                     if(x*add < 0) {printf("Infinite  FROM loop\n\n");}
                     else{
+                          printf("For will run for %d times\n", (int)(x / add+1));
                           for(double i = begin ; i<=end ; i+=add){
-                                printf("Runnning Inside  Loop and value of expression is:%.4lf\n",$8);
+                                printf("%.4lf\n",$8);
                              }
                     }   
                 }
@@ -415,14 +416,14 @@ loop_block:
                 {                  
                     printf("While will run for %d times\n",$2); 
                     for(int i = 0;i<$2;i++){
-                        printf("Value of Statement %.4lf\n",$4);
+                        printf(" %.4lf\n",$4);
                     }
                 }
             | DO START expr END WHILE while_conditions EOL 
                 {    
                     printf("repeat while will run for %d times\n",$6);
                     int x=$6;
-                    while(x--){   printf("Value of Statement %.4lf\n",$3); }  
+                    while(x--){   printf(" %.4lf\n",$3); }  
                 }
     ;
 while_conditions: 
@@ -701,23 +702,15 @@ expr:
                     }
                 }
     ; 
-
 %%
-
-
-int main() {
-   
+int main() { 
     initialize_globals();
-
     yyin = fopen("input.txt", "r");
     if (!yyin) {
         printf("Error opening input file");  
     }
-
     freopen("output.txt", "w", stdout);
-
     printf("\n-------Starting Program Execution-------\n\n\n");
-
     yyparse();
     return 0;
 }

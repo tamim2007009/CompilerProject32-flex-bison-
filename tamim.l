@@ -14,7 +14,7 @@
     return IMPORT; }
 	
 	
-"base"											{return ROOT;}
+"base"											{return BASE;}
 ":"												{return START;}
 ";"                                             {return EOL;}
 "end"											{return END;}

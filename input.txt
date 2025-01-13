@@ -7,63 +7,62 @@ base:
 	alpha str = "This is Tamim";
 	inspect >>> str;
 
-
-	num a = 5;
-	frac a = 30.25;
+	num a = 5,b = 2009.09;
+	frac b = 30.25;
     frac one= 3+3.2;
 	inspect >>>one ;
     
-	num b = 30.02;
-	# alpha d=30;  // will show syntax error , unexpected INTEGER, expecting STRING #
-	frac c = a+b*2+log(56);
-	frac xy = 5+6+-6;
-
+	frac c = b/a+(log2(64)+SQRT(100)-25)-a+b+log(56);
+	frac xy = 10+20+-29;
 
      inspect>>>a,b,c,xy;
 	
-
-	num $$ara = {1,2,3,4,5};
-	$$ara[4]=34;
-	
-	num factorial = (5+3)! ;
+	num factorial = (5+3)! ;   
 	inspect >>>factorial;
 	
-	#from-to loop#
+	#for loop here#
 	from 5 to 8 by 1:
-		num a=1+2+3;
-		
+		9-a;
 	end
-	num a = 5;
-	#while loop#
+
+
+     a = 5;
+	#while loop here#
 	while a-->0:
 		2*4/3;
 	end
-	#repeat-while#
+
+
+	#repeat-while here#
 	a=12;
 	repeat:
 		12*12
 	end
 	while a++<15 ;
 
-	#If#
+
+
+    # Conditional Statements #
+	
+    alpha ifC = "If condition here";
+	inspect >>> ifC;
 	num p = 25;
+	a=5;
 	if(p>20):
-		1*2*3;
+	 
+		SIN(3.1416/6)+.5+ SQRT(64)/a--;
 	end
-	#If else#
-	num p = 25;
-	if(p>30):
-		1*2*3;
-	end
-	else:
-		2*3*4;
-	end
+
+
+
 	#if-elif-else#
+
+	p=30;
 	if p>20 AND p<25:
 		1;
 	end
-	elif p>30 :
-		2;
+	elif p>=30 :
+			SQRT(144)+	log2(8)-3*4+ 100;
 	end
 	elif p>20 OR p<10:
 		3;
@@ -72,10 +71,32 @@ base:
 		4;
 	end
 
+
+
+
+
+	#If else#
+
+     p = 15;
+	if(p>30):
+		1000;
+	end
+	else:
+		3*4/3;
+	end
+
+
+
+
+
+
+
+
 	#Choices(switch-case)#
-	choices for p:
+	num opT=5;
+	choices for opT:
 	option 5:
-		1;
+		SIN(3.1416 / 2)+COS(0)+TAN(3.1416 / 4);
 	end
 	option 10:
 		2;
@@ -87,10 +108,15 @@ base:
 		4;
 	end
 	end
-	#Modules#
+
+
+	#Functions Here#
+
+	
 	module myFunction(num a,num b):
-		#inside Function#
+		#inside function#
 	end
-	call myFunction(a,p);
-	call myFunction(a,c);
+	call myFunction(para1,para2);
+	call myFunction(para1,para3);
+
 end

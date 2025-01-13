@@ -5,4 +5,4 @@ final:
 	./a.exe
 
 clean:
-	del a.exe tamim.tab.c tamim.tab.h lex.yy.c output.txt
+	del -f a.exe tamim.tab.c tamim.tab.h lex.yy.c output.txt

@@ -1,17 +1,12 @@
 %{
 	#include<stdio.h>
 	#include<stdlib.h>
-	#include<conio.h>
 	#include<string.h>
 	#include<math.h>
-    #include <windows.h>
-    #include <io.h>
-    #include <direct.h>
     #define YYDEBUG 1
     extern FILE *yyin;
     extern FILE *yyout;
 	int yylex();
-	int yyparse();
 	int yyerror(char *s);
 
     typedef struct variable{
@@ -21,7 +16,6 @@
         double *dval;
         char** sval;
         int size;
-        int isArray;
     }var;
 
     typedef struct functionstack{
@@ -46,18 +40,14 @@ stack *stk = NULL;
         exit(EXIT_FAILURE);
     }
 }
-
     int varCnt = 0,funCnt=0; 
     int vartaken = 0,funtaken=0;
     int cnt = 0; 
-    int *itmp;
-    double *dtmp;  /* Stores array value temporarily to insert later*/
-    char **stmp;
-    int conditionMatched; /* 1 if condition is matched in conditional statements(if-else,choice) */
-    double choiceValue; /* stores the value of choice to check in options. */
-    int currentFunction; /* module index that is being called currently. */
-    int currentParam; /* paramaters that have been processed of the calling function so far. */
-    int functionRejected; /* 1 if calling module structure doesn't match. */
+    int conditionMatched; 
+    double choiceValue;
+    int currentFunction;
+    int currentParam; 
+    int functionRejected; 
 
         int checkExistance(char *varName){
             for(int i = 0 ; i<varCnt; i++){
@@ -76,45 +66,22 @@ stack *stk = NULL;
             return -1;
         }
        
-        void doesNotExist(char *varName){            
-            printf("There is No Such Variable Named: %s\n\n",varName);         
-        } 
+        void doesNotExist(char *varName){   printf("There is No Such Variable Named: %s\n\n",varName);  } 
+        void outOfRange() { printf("Trying to Access index out of Range.\n\n");    }
+        void alreadyExist(char *varName)  { printf("%s is already Declared.\n\n",varName);  }
+        void notNumeric()  { printf("String literals not applicable.\n\n");    }
+        void notInt()  {  printf("Applicable of Integer only.\n\n"); }
         
-        void outOfRange(){
-           
-            printf("Trying to Access index out of Range.\n\n");
-           
-        }
-       
-        void alreadyExist(char *varName){
-            
-            printf("%s is already Declared.\n\n",varName);
-
-        }
-        void notNumeric(){
-         
-            printf("String literals not applicable.\n\n");
-             
-        }
-        void notInt(){
-             
-            printf("Applicable of Integer only.\n\n");
-             
-        }
-        /* Insert New variable in array. */
-        /* void pointer is used so that I can typecast it to the type defined by type variable. */
-        void insertData(char *varname,void* value,int type,int id,int size,int isArray){
+        void insertData(char *varname,void* value,int type,int id,int size){
             vptr[id].name = varname;
             vptr[id].size = size;
-            vptr[id].isArray = isArray;
             if(type==0){
                 int *x = ((int*)value);
                 vptr[id].ival = malloc(size*sizeof(int));
                 for(int i=0;i<size;i++){
                     vptr[id].ival[i] = x[i];
                 }
-                vptr[id].type = 0;
-                
+                vptr[id].type = 0;   
             }
             else if(type==1){
                 double* x = ((double*)value);
@@ -122,8 +89,7 @@ stack *stk = NULL;
                 for(int i=0;i<size;i++){
                     vptr[id].dval[i] = x[i];
                 }
-                vptr[id].type = 1;
-                
+                vptr[id].type = 1;    
             }
             else if(type==2){
                 char **s =((char**)value);
@@ -133,9 +99,7 @@ stack *stk = NULL;
                 }
                 vptr[id].type = 2;
             }
-        }
-
-        /* Printing a variable (including array)*/
+        }  
         void printVariable(char *varName){
             int index = getVariableIndex(varName);
             if (index == -1)
@@ -143,41 +107,17 @@ stack *stk = NULL;
                 doesNotExist(varName);
             }
             else
-            {
-                if (vptr[index].isArray)
-                {
-                    printf("%s is an array with %d elements.Elements are:\n\n", varName, vptr[index].size);
-                    for (int i = 0; i < vptr[index].size; i++)
-                    {
-                        if (vptr[index].type == 1)
-                            printf("%lf ", vptr[index].dval[i]);
-                        if (vptr[index].type == 0)
-                            printf("%d ", vptr[index].ival[i]);
-                        if (vptr[index].type == 2)
-                            printf("%s ", vptr[index].sval[i]);
-                        if (i % 10 == 9)
-                            puts("");
-                    }
-                    puts("");
-                }
-                else
-                {
-                    printf("Value of %s is:",varName);
+            {               
+                    printf(" %s :",varName);
                     if (vptr[index].type == 1)
                         printf("%lf\n", vptr[index].dval[0]);
                     if (vptr[index].type == 0)
                         printf("%d\n", vptr[index].ival[0]);
                     if (vptr[index].type == 2)
-                        printf("%s\n", vptr[index].sval[0]);
-                }
+                        printf("%s\n", vptr[index].sval[0]);        
             }
         }
 
-
-
-       
-
-        /* --- Helper Function for Modules. ---*/
         int getFunctionIndex(char *varName){
             for(int i = 0 ; i<funCnt; i++)
             {
@@ -188,16 +128,12 @@ stack *stk = NULL;
             return -1;
         }
 %}
-/* ---------------Bison Declaration. ---------------*/
-%error-verbose /* shows syntax error. */
-%debug /* helps to see all states one by one. */
 %union{
 	int integer;
 	double real;
 	char* string;
 }
-
-%token ROOT END START VARIABLE ARRAY_VAR EOL ARROW  
+%token BASE END START VARIABLE  EOL ARROW  
 %token INTEGER REAL STRING INT_TYPE REAL_TYPE STRING_TYPE
 %token SEE 
 %token AND OR NOT XOR LOG LOG2 LN SIN COS TAN FACTORIAL SQRT
@@ -206,8 +142,8 @@ stack *stk = NULL;
 %token COMMENT MODULE CALL
 %token IMPORT
 
-%type <integer> INTEGER ROOT END START program while_conditions
-%type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING ARRAY_VAR COMMENT
+%type <integer> INTEGER BASE END START program while_conditions
+%type <string> VARIABLE INT_TYPE REAL_TYPE STRING_TYPE STRING COMMENT
 %type <real> expr REAL statements statement 
 %nonassoc ELIF 
 %nonassoc ELSE
@@ -220,44 +156,25 @@ stack *stk = NULL;
 %right  '^' FACTORIAL
 %left SIN COS TAN
 %%
-                     /*  RULES  */
+                 
 
-program:    /* The program starts with #import<tamim.h>, then follows ROOT START statements END */
-            IMPORT ROOT START statements END 
-            {
-                printf("\n\n     -------Program Compiled Successfully-------\n\n\n");
-            }
-        ;
-
-statements: /* program consists of multiple statements . each statement will be called recursively. */
-                {/*Do Nothing.*/} 
+program:      IMPORT BASE START statements END    { printf("\n\n     -------Program Compiled Successfully-------\n\n\n");  } ;
+statements:  {/*Do Nothing.*/} 
             |   statements statement                             
-    ;
-statement: /* Types of statement we will see. */
-            EOL                 {}
-            | COMMENT            
-                {
-                   
-                    printf("  %s\n\n",$1);
-                    
-                }
+            ;
+statement:       EOL                 {}
+            | COMMENT             {   }
             | declaration EOL    {}
             | assigns EOL        {}
             | show EOL           {}
-            | expr EOL           
-                {
-                    
-                    printf("Value of the expression:%.4lf\n\n",$1);
-                    $$ = $1;
-                    
-                }
+            | expr EOL    { printf("%.4lf\n\n",$1);
+                               $$ = $1; }
             | if_blocks          
                 {conditionMatched=0;}
             | choice_block       {}
             | loop_block         {}
             | module_declare     
-                {
-                        
+                {   
                         printf("New Module Declared-");
                         printf("Module Name: %s\n",stk[funCnt].fname);
                         printf("Parameters of the Module\n");
@@ -278,8 +195,7 @@ statement: /* Types of statement we will see. */
             | module_call        {}
             
     ;
-declaration: /* Variable Declaration */
-            INT_TYPE int_variables
+declaration: INT_TYPE int_variables
             | REAL_TYPE real_variables
             | STRING_TYPE string_variables
     ;
@@ -296,43 +212,17 @@ int_var:
                     }
                     else{
                         int value = $3;
-                        insertData($1,&value,0,varCnt,1,0);
+                        insertData($1,&value,0,varCnt,1);
                         varCnt++;
                     }
                 }
             | VARIABLE                        
                 {
                     int value = rand();
-                    insertData($1,&value,0,varCnt,1,0);
+                    insertData($1,&value,0,varCnt,1);
                     varCnt++;
-                }                       
-            |   ARRAY_VAR                       
-                {
-                    insertData($1,itmp,0,varCnt,cnt,1);
-                    varCnt++;
-                }
-            |   ARRAY_VAR '=' '{' ints '}'   
-                {
-                    insertData($1,itmp,0,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(itmp);
-                }
+                }                            
     ; 
-ints:                   
-            ints ',' expr                   
-                {
-                    cnt++;
-                    itmp = realloc(itmp,cnt*sizeof(int));;
-                    itmp[cnt-1]=$3;
-                }
-            | expr                            
-                {
-                    cnt++;
-                    itmp = realloc(itmp,cnt*sizeof(int));;
-                    itmp[cnt-1]=(int)$1;
-                }
-    ;  
 real_variables: 
             real_variables ',' real_var {}
             | real_var                  {}
@@ -346,44 +236,17 @@ real_var:
                     }
                     else{
                         double value = $3;
-                        insertData($1,&value,1,varCnt,1,0);
+                        insertData($1,&value,1,varCnt,1);
                         varCnt++;
                     }
                 }
             | VARIABLE                        
             {
                 double value = rand();
-                insertData($1,&value,1,varCnt,1,0);
+                insertData($1,&value,1,varCnt,1);
                 varCnt++;
-            }                       
-            | ARRAY_VAR                      
-                {
-                    printf("Real Array Declaration.\n");
-                    insertData($1,dtmp,1,varCnt,cnt,1);
-                    varCnt++;
-                }
-            | ARRAY_VAR '=' '{' reals '}'      
-                {
-                    insertData($1,dtmp,1,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(dtmp);
-                }
+            }                           
     ; 
-reals:                   
-            reals ',' expr
-                {
-                    cnt++;
-                    dtmp = realloc(dtmp,cnt*sizeof(double));;
-                    dtmp[cnt-1]=$3;
-                }
-            | expr                            
-                {
-                    cnt++;
-                    dtmp = realloc(dtmp,cnt*sizeof(double));;
-                    dtmp[cnt-1]=$1;
-                }       
-    ;  
 string_variables: 
             string_variables ',' string_var            {}
             | string_var                               {}
@@ -397,79 +260,33 @@ string_var:
                     }
                     else{
                     char *value= $3;
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     varCnt++;
-                    printf("New variable initialized.\n\n");
+                  
                     }
                 }
             | VARIABLE                        
                 {
                     char* value = "";
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     varCnt++;
-                }                       
-            | ARRAY_VAR                       
-                {
-                    printf("Integer Array Declaration.\n\n");
-                    insertData($1,stmp,2,varCnt,cnt,1);
-                    varCnt++;
-                }
-            | ARRAY_VAR '=' '{' strings '}'      
-                {
-                    printf("String Array of size:%d\n",cnt);
-                    insertData($1,stmp,2,varCnt,cnt,1);
-                    varCnt++;
-                    cnt = 0;
-                    free(stmp);
-                }
+                }                               
     ; 
-strings:                   
-            strings ',' STRING                   
-                {
-                    cnt++;
-                    stmp = realloc(stmp,cnt*sizeof(char*));;
-                    stmp[cnt-1]=$3;
-                }
-            | STRING                           
-                {
-                    cnt++;
-                    stmp = realloc(stmp,cnt*sizeof(char*));;
-                    stmp[cnt-1]=$1;
-                }
-    ;
 show:
             SEE ARROW print_vars
     ;
 print_vars:
-            print_vars ',' VARIABLE             
-                {
-                    printVariable($3);
-                }
-            | print_vars ',' ARRAY_VAR        
-                {
-                    printVariable($3);
-                }
-           
-            | VARIABLE   
-                {
-                    printVariable($1);
-                }
-           
+            print_vars ',' VARIABLE   {   printVariable($3);  }        
+            | VARIABLE     {  printVariable($1);   }        
     ;
 
-assigns:
-             assigns ',' assign
+assigns:     assigns ',' assign
             | assign
     ;
-assign:
-
-            VARIABLE '=' expr
+assign:     VARIABLE '=' expr
                 {
                     int index = getVariableIndex($1);
-                    if (index == -1)
-                    {
-                        printf("there is no variable named %s.\n\n", $1);
-                    }
+                    if (index == -1) {    printf("there is no variable named %s.\n\n", $1);   }
                     else
                     {
                         {
@@ -479,77 +296,36 @@ assign:
                                 vptr[index].ival[0] = $3;
                         }
                     }
-                }
-            | ARRAY_VAR '[' INTEGER ']' '=' expr
-                {
-                    int id = $3;
-                    int index = getVariableIndex($1);
-                    if (index == -1)
-                    {
-                        doesNotExist($1);
-                    }
-                    else
-                    {
-                        if(id>=vptr[index].size){
-                            outOfRange();
-                        }
-                        else
-                        {
-                            if (vptr[index].type == 1)
-                                vptr[index].dval[id] = $6;
-                            if (vptr[index].type == 0)
-                                vptr[index].ival[id] =  $6;
-                        }
-                    }
-                }
+                }      
     ;
-if_blocks:
-            IF if_block else_statement   {}
+if_blocks:    IF if_block else_statement   {}
     ;
-if_block:
-            expr START statement END 
+if_block:     expr START statement END 
                 {
                     int isTrue = (fabs($1)>1e-9);
-                    if(isTrue){
-                        
-                        printf("Condition in if block is true.\n");
-                        
-                        printf("Value of expression in if block is %.4lf\n\n",$3);
+                    if(isTrue){                       
+                        printf("Condition in if block is true.\n");                      
+                        printf(" %.4lf\n\n",$3);
                         conditionMatched = 1;
                     }
-                    else{
-                        
-                        printf("Condition in if block is false.\n");
-                        
-                    }
+                    else{    printf("Condition in if block is false.\n");     }
                 }
     ;
-else_statement:
-            | elif_statement
+else_statement:  | elif_statement
             | elif_statement   single_else
             | single_else
     ;
 single_else: ELSE START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring else block.\n\n");
-                        
-                    }
+                    if(conditionMatched){    printf("Condition already fulfilled.Ignoring else block.\n\n");    }
                     else{
                         double isTrue =1;
-                        if(isTrue){
-                            
-                            printf("Condition in else block is true.\n");
-                            
-                            printf("Value of expression in else block is %.4lf\n\n",$4);
+                        if(isTrue){                      
+                            printf("Condition in else block is true.\n");         
+                             printf(" %.4lf\n\n",$4);
                             conditionMatched = 1;
                         }
-                        else{
-                            
-                            printf("Condition in else block is false.\n");
-                            
-                        }
+                        else{  printf("Condition in else block is false.\n");    }
                     }  
                 }
     ;
@@ -560,30 +336,19 @@ elif_statement:
 single_elif:
             ELIF expr START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring elif block.\n\n");
-                        
-                    }
+                    if(conditionMatched) { printf("Condition already fulfilled.Ignoring elif block.\n\n");}              
                     else{
                             int isTrue = (fabs($2)>1e-9);
-                            if(isTrue){
-                                
+                            if(isTrue){   
                                 printf("Condition in elif block is true.\n");
-                                
-                                printf("Value of expression in elif block is %.4lf\n",$4);
+                                printf(" %.4lf\n",$4);
                                 conditionMatched = 1;
                             }
-                            else{
-                                
-                                printf("Condition in elif block is false.\n");
-                                
-                            }
+                            else { printf("Condition in elif block is false.\n");}
+                                  
                         }
                 }
     ;
-
-
 choice_block: 
             CHOICE choice_variable START options END  
                 {conditionMatched = 0;}
@@ -593,15 +358,10 @@ choice_variable:
                 {
                     int id = getVariableIndex($1);
                     if(id==-1) printf("No such variable");
-                    else if(vptr[id].type==2){
-                        
-                        printf("can't assign string in choices.");
-                        
-                    }
+                    else if(vptr[id].type==2) { printf("can't assign string in choices.");}
                     else if(vptr[id].type==0) choiceValue = vptr[id].ival[0];
                     else choiceValue = vptr[id].dval[0];
                 }
-
     ;
 options:    
             optionlist default
@@ -610,16 +370,10 @@ options:
 default: 
             DEFAULT START statement END
                 {
-                    if(conditionMatched){
-                        
-                        printf("Condition already fulfilled.Ignoring default option.\n");
-                        
-                        }
+                    if(conditionMatched) {    printf("Condition already fulfilled.Ignoring default option.\n");  }
                     else{
-                        
-                        printf("Executing Default Option.No match found.\n");
-                        
-                        printf("Value of expression: %.4lf\n\n",$3);
+                          printf("Executing Default Option.No match found.\n");          
+                        printf(" %.4lf\n\n",$3);
                     }
                 }
     ;
@@ -630,29 +384,19 @@ optionlist:
 option: 
             OPTION expr START statement END 
                 {
-                    if(conditionMatched){
+                    if(conditionMatched) {printf("Condition already fulfilled.Ignoring current option\n");}
                         
-                        printf("Condition already fulfilled.Ignoring current option\n");
-                        
-                        }
                     else{
                         int isTrue = (fabs($2-choiceValue)<1e-9);
-                            if(isTrue){
-                                
-                                printf("Option matched.\n\n");
-                                
-                                printf("Value of expression in current option %.4lf\n\n",$4);
+                            if(isTrue){ 
+                                printf("Option matched.\n\n");        
+                                printf(" %.4lf\n\n",$4);
                                 conditionMatched = 1;
                             }
-                            else{
-                                
-                                printf("Condition of current option doesn't match.\n");
-                                
-                            }
+                            else {printf("Condition of current option doesn't match.\n");}    
                     }
                 }
     ;
-
 loop_block: 
             FROM expr TO expr BY expr START statement END 
                 {
@@ -660,31 +404,26 @@ loop_block:
                     double end = $4;
                     double add = $6;
                     double x = end-begin;
-                    if(x*add < 0){
-                        
-                        printf("Infinite  FROM loop\n\n");
-                        
-                    }
+                    if(x*add < 0) {printf("Infinite  FROM loop\n\n");}
                     else{
+                          printf("For will run for %d times\n", (int)(x / add+1));
                           for(double i = begin ; i<=end ; i+=add){
-                                printf("Runnning Inside  Loop and value of expression is:%.4lf\n",$8);
+                                printf("%.4lf\n",$8);
                              }
                     }   
                 }
             | WHILE while_conditions START statement END
-                {
-                    
-                    printf("While will run for %d times\n",$2);
-                    
+                {                  
+                    printf("While will run for %d times\n",$2); 
                     for(int i = 0;i<$2;i++){
-                        printf("Value of Statement %.4lf\n",$4);
+                        printf(" %.4lf\n",$4);
                     }
                 }
             | DO START expr END WHILE while_conditions EOL 
-                {
-                    
+                {    
                     printf("repeat while will run for %d times\n",$6);
-                    
+                    int x=$6;
+                    while(x--){   printf(" %.4lf\n",$3); }  
                 }
     ;
 while_conditions: 
@@ -806,7 +545,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     int value = rand();
-                    insertData($2,&value,0,varCnt,1,0);
+                    insertData($2,&value,0,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;
@@ -815,7 +554,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     double value = rand();
-                    insertData($2,&value,1,varCnt,1,0);
+                    insertData($2,&value,1,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;
@@ -824,7 +563,7 @@ single_var:
                 {
                     int id = stk[funCnt].varCnt;
                     char* value = "";
-                    insertData($1,&value,2,varCnt,1,0);
+                    insertData($1,&value,2,varCnt,1);
                     stk[funCnt].fptr[id] = vptr[varCnt];
                     varCnt++;
                     stk[funCnt].varCnt++;
@@ -901,120 +640,34 @@ expr:
                     else if(vptr[id].type==0) $$ = vptr[id].ival[0];
                     else $$ = vptr[id].dval[0];
                 }
-            | '+' expr
-                {
-                    $$ = $2;
-                }
-            | '-' expr
-                {
-                    $$ = -$2;
-                }
-            | PPLUS expr
-                {
-                    $$ = $2;
-                }
-            | MMINUS expr
-                {
-                    $$ = $2;
-                }
-            | expr '+' expr         
-                {
-                    $$ = $1 + $3;
-                }
-            | expr '-' expr         
-                {
-                    $$ = $1 - $3;
-                }
-            | expr '*' expr
-                {
-                    $$ = $1 * $3;
-                } 
-            | expr '/' expr         
-                {
-                    $$ = $1 / $3;
-                }
-            | expr '^' expr         
-                {
-                    $$ = pow($1,$3);
-                }
-            | expr '%' expr         
-                {
-
-                    $$ = (int)$1 % (int)$3;
-                }
-            | expr '<' expr         
-                {
-                    $$ = ($1 < $3);
-                }
-            | expr '>' expr         
-                {
-                    $$ = ($1 > $3);
-                }
-            | expr LEQL expr        
-                {
-                    $$ = ($1 <= $3);
-                }
-            | expr GEQL expr        
-                {
-                    $$ = ($1 >= $3);
-                }
-            | expr EQL expr         
-                {
-                    $$ = ($1 == $3);
-                }
-            | expr NEQL expr        
-                {
-                    $$ = ($1 != $3);
-                }
-            | expr AND expr         
-                {
-                    $$ = ( $1 && $3);
-                }
-            | expr OR expr          
-                {
-                    $$ = ($1 || $3);
-                }
-            | expr XOR expr         
-                {
-                    $$ = ((int)$1 ^ (int)$3);
-                }
-            | NOT expr              
-                {
-                    $$ = !$2;
-                }
-            | '(' expr ')'          
-                {
-                    $$ = $2;
-                }
-            | SIN '(' expr ')'      
-                {
-                    $$ = sin($3);
-
-                }
-            | COS '(' expr ')'      
-                {
-                    $$ = cos($3);
-                }
-            | TAN '(' expr ')'      
-                {
-                    $$ = tan($3);
-                }
-            | LOG '(' expr ')'      
-                {
-                    $$ = log10($3);
-                }
-            | LOG2 '(' expr ')'     
-                {
-                    $$ = log2($3);
-                }
-            | LN '(' expr ')'       
-                {
-                    $$ = log($3);
-                }
-            | SQRT '(' expr ')'     
-                {
-                    $$ = sqrt($3);
-                }
+            | '+' expr { $$ = $2;}
+            | '-' expr { $$ = -$2;}
+            | PPLUS expr {$$ = $2;}
+            | MMINUS expr {$$ = $2;}
+            | expr '+' expr   {$$ = $1 + $3;}      
+            | expr '-' expr    {$$ = $1 - $3;}     
+            | expr '*' expr   {$$ = $1 * $3;}
+            | expr '/' expr  {$$ = $1 / $3;}       
+            | expr '^' expr   {$$ = pow($1,$3);}      
+            | expr '%' expr     {$$ = (int)$1 % (int)$3;}    
+            | expr '<' expr      {$$ = ($1 < $3);}   
+            | expr '>' expr    {$$ = ($1 > $3);}     
+            | expr LEQL expr  {$$ = ($1 <= $3);}      
+            | expr GEQL expr    {$$ = ($1 >= $3);}    
+            | expr EQL expr    {$$ = ($1 == $3);}     
+            | expr NEQL expr  {$$ = ($1 != $3);}      
+            | expr AND expr  {$$ = ( $1 && $3);}       
+            | expr OR expr   {$$ = ($1 || $3);}       
+            | expr XOR expr    {$$ = ((int)$1 ^ (int)$3);}     
+            | NOT expr    {$$ = !$2;}          
+            | '(' expr ')'    {$$ = $2;}      
+            | SIN '(' expr ')'      { $$ = sin($3);}
+            | COS '(' expr ')'      {  $$ = cos($3);}
+            | TAN '(' expr ')'    {    $$ = tan($3);} 
+            | LOG '(' expr ')'   { $$ = log10($3);}   
+            | LOG2 '(' expr ')'     {$$ = log2($3);}
+            | LN '(' expr ')'      { $$ = log($3);} 
+            | SQRT '(' expr ')'     { $$ = sqrt($3);     }
             | VARIABLE PPLUS        
                 {
                     int id = getVariableIndex($1);
@@ -1049,23 +702,15 @@ expr:
                     }
                 }
     ; 
-
 %%
-
-
-int main() {
-   
+int main() { 
     initialize_globals();
-
     yyin = fopen("input.txt", "r");
     if (!yyin) {
         printf("Error opening input file");  
     }
-
     freopen("output.txt", "w", stdout);
-
     printf("\n-------Starting Program Execution-------\n\n\n");
-
     yyparse();
     return 0;
 }

@@ -9,17 +9,20 @@ base:
 
 	num a = 5,b = 2009.09;
 	frac b = 30.25;
-    frac one= 3+3.2;
-	inspect >>>one ;
+    frac one= 3+3.2+ln(9);
+	
     
 	frac c = b/a+(log2(64)+SQRT(100)-25)-a+b+log(56);
 	frac xy = 10+20+-29;
 
-     inspect>>>a,b,c,xy;
+     inspect >>>one ;
+     inspect >>> a,b,c,xy;
 	
+
 	num factorial = (5+3)! ;   
 	inspect >>>factorial;
 	
+
 	#for loop here#
 	from 5 to 8 by 1:
 		9-a;
@@ -73,8 +76,6 @@ base:
 
 
 
-
-
 	#If else#
 
      p = 15;
@@ -84,11 +85,6 @@ base:
 	else:
 		3*4/3;
 	end
-
-
-
-
-
 
 
 
@@ -112,7 +108,8 @@ base:
 
 	#Functions Here#
 
-	
+	num para1=10, para2=20;
+	alpha para3="asdf";
 	module myFunction(num a,num b):
 		#inside function#
 	end

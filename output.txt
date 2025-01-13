@@ -6,7 +6,7 @@
  str :This is Tamim
 b is already Declared.
 
- one :6.200000
+ one :8.397225
  a :5
  b :2009
  c :2398.548188
@@ -83,8 +83,8 @@ Parameter Name:a Data Type: INT
 Parameter Name:b Data Type: INT
 Module called Successfully.
 
-Module called Successfully.
-
+Data Type doesn't match
+Module was not called as declared
 
 
      -------Program Compiled Successfully-------
